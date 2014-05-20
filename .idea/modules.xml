@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MyNativePhotoDiary.iml" filepath="$PROJECT_DIR$/MyNativePhotoDiary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MyNativePhotoDiary/MyNativePhotoDiary-MyNativePhotoDiary.iml" filepath="$PROJECT_DIR$/MyNativePhotoDiary/MyNativePhotoDiary-MyNativePhotoDiary.iml" />
+    </modules>
+  </component>
+</project>
+

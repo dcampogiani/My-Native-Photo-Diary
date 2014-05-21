@@ -8,15 +8,22 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.danielecampogiani.mynativephotodiary.activities.MainActivity"
             android:label="@string/app_name"
-            android:uiOptions="splitActionBarWhenNarrow">
+            android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="com.danielecampogiani.mynativephotodiary.persistence.PicturesProvider"
+            android:authorities="com.danielecampogiani.picturesprovider"
+            android:enabled="true"
+            android:exported="true" >
+        </provider>
     </application>
 
 </manifest>

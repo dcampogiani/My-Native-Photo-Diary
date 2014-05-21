@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import com.danielecampogiani.mynativephotodiary.R;
 import com.danielecampogiani.mynativephotodiary.fragments.TimelineFragment;
 import com.danielecampogiani.mynativephotodiary.fragments.PlacesFragment;
+import com.danielecampogiani.mynativephotodiary.persistence.PicturesProvider;
 
 
 public class MainActivity extends Activity {
@@ -40,6 +43,18 @@ public class MainActivity extends Activity {
         actionBar.addTab(placesTab);
 
         setContentView(R.layout.activity_main);
+
+        ContentResolver cr = getContentResolver();
+        /*ContentValues newValues = new ContentValues();
+        newValues.put(PicturesProvider.KEY_DESCRIPTION,"desc");
+        newValues.put(PicturesProvider.KEY_LATITUDE,11.23);
+        newValues.put(PicturesProvider.KEY_LONGITUDE, 12.03);
+        newValues.put(PicturesProvider.KEY_URI,"http://www.calcioweb.eu/wp-content/uploads/2013/01/Vieri-Inter.jpg");
+
+        cr.insert(PicturesProvider.CONTENT_URI,newValues);*/
+
+        //cr.delete(PicturesProvider.CONTENT_URI,null,null);
+
 
     }
 

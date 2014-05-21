@@ -2,6 +2,7 @@ package com.danielecampogiani.mynativephotodiary.fragments;
 
 
 
+import android.app.ListFragment;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +15,7 @@ import com.danielecampogiani.mynativephotodiary.R;
  * A simple {@link Fragment} subclass.
  *
  */
-public class TimelineFragment extends Fragment {
+public class TimelineFragment extends ListFragment {
 
 
     public TimelineFragment() {

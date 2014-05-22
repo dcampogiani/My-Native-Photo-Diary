@@ -37,8 +37,7 @@ public class TimelinePicturesAdapter extends CursorAdapter {
         TextView description = (TextView)view.findViewById(R.id.timeline_picture_description);
         Button deleteButton = (Button)view.findViewById(R.id.delete_button);
         Button shareButton = (Button)view.findViewById(R.id.share_button);
+        description.setText(cursor.getString(cursor.getColumnIndex(PicturesProvider.KEY_DESCRIPTION)));
         imageView.setImageURI(Uri.parse(cursor.getString(cursor.getColumnIndex(PicturesProvider.KEY_URI))));
-        //imageView.setImageURI(Uri.parse("http://www.calcioweb.eu/wp-content/uploads/2013/01/Vieri-Inter.jpg"));
-
     }
 }

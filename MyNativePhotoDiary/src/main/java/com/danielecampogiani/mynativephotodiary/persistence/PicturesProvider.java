@@ -132,6 +132,7 @@ public class PicturesProvider extends ContentProvider {
         }
 
         Cursor cursor = queryBuilder.query(db,projection,selection,selectionArgs,groupBy,having,sortOrder);
+        cursor.setNotificationUri(getContext().getContentResolver(),uri);
         return cursor;
 
     }

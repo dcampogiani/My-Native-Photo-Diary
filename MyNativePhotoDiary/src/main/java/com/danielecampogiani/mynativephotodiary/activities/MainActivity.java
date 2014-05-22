@@ -4,19 +4,40 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.danielecampogiani.mynativephotodiary.R;
 import com.danielecampogiani.mynativephotodiary.fragments.TimelineFragment;
 import com.danielecampogiani.mynativephotodiary.fragments.PlacesFragment;
 import com.danielecampogiani.mynativephotodiary.persistence.PicturesProvider;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class MainActivity extends Activity {
+
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private Uri currentUri;
 
     ActionBar actionBar;
 
@@ -25,6 +46,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
 
         Tab timelineTab = actionBar.newTab();
         TabListener timelineListener = new com.danielecampogiani.mynativephotodiary.fragments.TabListener<TimelineFragment>(this,R.id.container, TimelineFragment.class);
@@ -43,15 +65,6 @@ public class MainActivity extends Activity {
         actionBar.addTab(placesTab);
 
         setContentView(R.layout.activity_main);
-
-        ContentResolver cr = getContentResolver();
-        /*ContentValues newValues = new ContentValues();
-        newValues.put(PicturesProvider.KEY_DESCRIPTION,"desc");
-        newValues.put(PicturesProvider.KEY_LATITUDE,11.23);
-        newValues.put(PicturesProvider.KEY_LONGITUDE, 12.03);
-        newValues.put(PicturesProvider.KEY_URI,"http://www.calcioweb.eu/wp-content/uploads/2013/01/Vieri-Inter.jpg");
-
-        cr.insert(PicturesProvider.CONTENT_URI,newValues);*/
 
         //cr.delete(PicturesProvider.CONTENT_URI,null,null);
 
@@ -73,11 +86,106 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_new_picture) {
+            Log.i("MainActivity","new picture selected");
+            takeNewPicture();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode==CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
+
+            if (resultCode==RESULT_OK){
+
+                LayoutInflater inflater = LayoutInflater.from(this);
+                View promptView = inflater.inflate(R.layout.dialog_description_layout,null);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setView(promptView);
+
+                alertDialogBuilder.setCancelable(false);
+                final EditText input = (EditText)promptView.findViewById(R.id.userInput);
+                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        try {
+
+                            ExifInterface exif = new ExifInterface(currentUri.getPath());
+                            float[] latLong = new float[2];
+
+                            if (exif.getLatLong(latLong)){
+                                Log.i("MainActivity","immagine ha coordinate: "+ latLong[0] + " , "+ latLong[1]);
+                            }
+
+                            Log.i("MainActivity","la descrizione è "+ input.getText());
+
+                            Log.i("MainActivity", "salvata nuova immagine in "+currentUri.getPath());
+
+
+                            ContentResolver cr = getContentResolver();
+                            ContentValues newValues = new ContentValues();
+                            newValues.put(PicturesProvider.KEY_DESCRIPTION,input.getText().toString());
+                            newValues.put(PicturesProvider.KEY_LATITUDE,latLong[0]);
+                            newValues.put(PicturesProvider.KEY_LONGITUDE, latLong[1]);
+                            newValues.put(PicturesProvider.KEY_URI,currentUri.getPath());
+
+                            cr.insert(PicturesProvider.CONTENT_URI,newValues);
+
+                        }catch (IOException e){
+
+                        }
+
+                    }
+
+                });
+                alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+
+                    public void onClick(DialogInterface dialog, int id) {
+                        File file = new File(currentUri.getPath());
+                        file.delete();
+
+                    }
+
+                });
+
+                AlertDialog alertD = alertDialogBuilder.create();
+                alertD.show();
+
+            }
+
+        }
+
+    }
+
+    private void takeNewPicture(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        currentUri = getOutputMediaFile();
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,currentUri);
+
+        Log.d("MainActivity","provo a salvare immagine in "+currentUri);
+
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+
+    private Uri getOutputMediaFile(){
+
+        //File mediaStorageDir = getFilesDir();
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyNativePhotoDiary"  );
+
+        if (!mediaStorageDir.exists()){
+            if (!mediaStorageDir.mkdirs()){
+                Log.d("MainActivity","failed to create directory");
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
+
+        return Uri.fromFile(mediaFile);
+    }
 
 }
 

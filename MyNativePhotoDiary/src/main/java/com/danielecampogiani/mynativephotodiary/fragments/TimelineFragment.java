@@ -1,14 +1,14 @@
 package com.danielecampogiani.mynativephotodiary.fragments;
 
 
-
+import android.app.Fragment;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +29,11 @@ public class TimelineFragment extends ListFragment implements LoaderManager.Load
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,14 +55,14 @@ public class TimelineFragment extends ListFragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = new String[]{PicturesProvider.KEY_ID,PicturesProvider.KEY_DESCRIPTION,PicturesProvider.KEY_URI};
-        CursorLoader loader = new CursorLoader(getActivity(), PicturesProvider.CONTENT_URI,projection,null,null,null);
+        CursorLoader loader = new CursorLoader(getActivity(), PicturesProvider.CONTENT_URI,projection,null,null,PicturesProvider.KEY_ID + " DESC");
         return loader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.i("TimelineFragment","onLoadFinished");
         adapter.swapCursor(data);
-
 
     }
 

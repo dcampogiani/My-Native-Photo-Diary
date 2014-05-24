@@ -1,13 +1,12 @@
 package com.danielecampogiani.mynativephotodiary.activities;
 
-import android.app.Activity;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.ExifInterface;
@@ -22,11 +21,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.danielecampogiani.mynativephotodiary.R;
-import com.danielecampogiani.mynativephotodiary.fragments.TimelineFragment;
 import com.danielecampogiani.mynativephotodiary.fragments.PlacesFragment;
+import com.danielecampogiani.mynativephotodiary.fragments.TimelineFragment;
 import com.danielecampogiani.mynativephotodiary.persistence.PicturesProvider;
 
 import java.io.File;

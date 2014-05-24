@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -66,9 +67,6 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
-        //cr.delete(PicturesProvider.CONTENT_URI,null,null);
-
-
     }
 
 
@@ -95,63 +93,12 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode==CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
 
             if (resultCode==RESULT_OK){
 
-                LayoutInflater inflater = LayoutInflater.from(this);
-                View promptView = inflater.inflate(R.layout.dialog_description_layout,null);
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                alertDialogBuilder.setView(promptView);
-
-                alertDialogBuilder.setCancelable(false);
-                final EditText input = (EditText)promptView.findViewById(R.id.userInput);
-                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        try {
-
-                            ExifInterface exif = new ExifInterface(currentUri.getPath());
-                            float[] latLong = new float[2];
-
-                            if (exif.getLatLong(latLong)){
-                                Log.i("MainActivity","immagine ha coordinate: "+ latLong[0] + " , "+ latLong[1]);
-                            }
-
-                            Log.i("MainActivity","la descrizione è "+ input.getText());
-
-                            Log.i("MainActivity", "salvata nuova immagine in "+currentUri.getPath());
-
-
-                            ContentResolver cr = getContentResolver();
-                            ContentValues newValues = new ContentValues();
-                            newValues.put(PicturesProvider.KEY_DESCRIPTION,input.getText().toString());
-                            newValues.put(PicturesProvider.KEY_LATITUDE,latLong[0]);
-                            newValues.put(PicturesProvider.KEY_LONGITUDE, latLong[1]);
-                            newValues.put(PicturesProvider.KEY_URI,currentUri.getPath());
-
-                            cr.insert(PicturesProvider.CONTENT_URI,newValues);
-
-                        }catch (IOException e){
-
-                        }
-
-                    }
-
-                });
-                alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-
-                    public void onClick(DialogInterface dialog, int id) {
-                        File file = new File(currentUri.getPath());
-                        file.delete();
-
-                    }
-
-                });
-
-                AlertDialog alertD = alertDialogBuilder.create();
-                alertD.show();
+                saveNewPicture();
 
             }
 
@@ -160,13 +107,17 @@ public class MainActivity extends Activity {
     }
 
     private void takeNewPicture(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        currentUri = getOutputMediaFile();
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,currentUri);
 
-        Log.d("MainActivity","provo a salvare immagine in "+currentUri);
+        // display UI progress indicator
+        // ...
+        new NewPictureAsyncTask() {
+            protected void onPostExecute(Boolean result) {
+                // dismiss UI progress indicator
+                // process the result
+                // ...
+            }
+        }.execute(); // start the background processing
 
-        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
     private Uri getOutputMediaFile(){
@@ -185,6 +136,112 @@ public class MainActivity extends Activity {
         File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_"+ timeStamp + ".jpg");
 
         return Uri.fromFile(mediaFile);
+    }
+
+    private void saveNewPicture(){
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View promptView = inflater.inflate(R.layout.dialog_description_layout,null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(promptView);
+
+        alertDialogBuilder.setCancelable(false);
+        final EditText input = (EditText)promptView.findViewById(R.id.userInput);
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+
+            public void onClick(DialogInterface dialog, int id) {
+
+                // display UI progress indicator
+                // ...
+                new SavePictureAsyncTask(currentUri,input.getText().toString()) {
+                    protected void onPostExecute(Boolean result) {
+                        // dismiss UI progress indicator
+                        // process the result
+                        // ...
+                    }
+                }.execute(); // start the background processing
+
+            }
+
+        });
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+
+            public void onClick(DialogInterface dialog, int id) {
+                File file = new File(currentUri.getPath());
+                file.delete();
+
+            }
+
+        });
+
+        AlertDialog alertD = alertDialogBuilder.create();
+        alertD.show();
+
+    }
+
+    class NewPictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... arg0) {
+            // do background processing and return the appropriate result
+            // ...
+
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            currentUri = getOutputMediaFile();
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,currentUri);
+
+            Log.d("MainActivity","provo a salvare immagine in "+currentUri);
+
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
+            return true;
+        }
+    }
+
+    class SavePictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+
+        private Uri uri;
+        private String description;
+
+        public SavePictureAsyncTask(Uri uri, String description){
+            this.uri=uri;
+            this.description=description;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... arg0) {
+            // do background processing and return the appropriate result
+            // ...
+
+            try {
+
+                ExifInterface exif = new ExifInterface(uri.getPath());
+                float[] latLong = new float[2];
+
+                if (exif.getLatLong(latLong)){
+                    Log.i("MainActivity","immagine ha coordinate: "+ latLong[0] + " , "+ latLong[1]);
+                }
+
+                Log.i("MainActivity","la descrizione è "+ description);
+
+                Log.i("MainActivity", "salvata nuova immagine in "+uri.getPath());
+
+
+                ContentResolver cr = getContentResolver();
+                ContentValues newValues = new ContentValues();
+                newValues.put(PicturesProvider.KEY_DESCRIPTION,description);
+                newValues.put(PicturesProvider.KEY_LATITUDE,latLong[0]);
+                newValues.put(PicturesProvider.KEY_LONGITUDE, latLong[1]);
+                newValues.put(PicturesProvider.KEY_URI,currentUri.getPath());
+
+                cr.insert(PicturesProvider.CONTENT_URI,newValues);
+
+            }catch (IOException e){
+
+            }
+
+
+            return true;
+        }
     }
 
 }

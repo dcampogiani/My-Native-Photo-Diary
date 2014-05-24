@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -96,6 +97,17 @@ public class TimelinePicturesAdapter extends CursorAdapter {
                 alertDialog.show();
             }
 
+        });
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(uri)));
+                shareIntent.setType("image/jpeg");
+                context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.send_to)));
+            }
         });
 
         descriptionView.setText(cursor.getString(cursor.getColumnIndex(PicturesProvider.KEY_DESCRIPTION)));

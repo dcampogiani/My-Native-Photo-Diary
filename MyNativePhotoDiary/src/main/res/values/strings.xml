@@ -9,4 +9,5 @@
     <string name="delete_button_text">Delete</string>
     <string name="share_button_text">Share</string>
     <string name="insert_description_dialog_title">Description:</string>
+    <string name="send_to">Send to</string>
 </resources>

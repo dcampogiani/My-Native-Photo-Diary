@@ -3,11 +3,14 @@ package com.danielecampogiani.mynativephotodiary.adapters;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,7 @@ import com.danielecampogiani.mynativephotodiary.R;
 import com.danielecampogiani.mynativephotodiary.persistence.PicturesProvider;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by danielecampogiani on 21/05/14.
@@ -76,11 +80,14 @@ public class TimelinePicturesAdapter extends CursorAdapter {
                             public void onClick(DialogInterface dialog,int id) {
                                 // if this button is clicked, close
                                 // current activity
-                                ContentResolver cr = context.getContentResolver();
-                                Uri toDelete = ContentUris.withAppendedId(PicturesProvider.CONTENT_URI, pictureId);
-                                cr.delete(toDelete,null,null);
-                                File file = new File(uri);
-                                file.delete();
+                                new DeletePictureAsyncTask(context,pictureId,uri) {
+                                    protected void onPostExecute(Boolean result) {
+                                        // dismiss UI progress indicator
+                                        // process the result
+                                        // ...
+                                    }
+                                }.execute(); // start the background processing
+
 
                             }
                         })
@@ -112,5 +119,33 @@ public class TimelinePicturesAdapter extends CursorAdapter {
 
         descriptionView.setText(cursor.getString(cursor.getColumnIndex(PicturesProvider.KEY_DESCRIPTION)));
         imageView.setImageURI(Uri.parse(cursor.getString(cursor.getColumnIndex(PicturesProvider.KEY_URI))));
+    }
+}
+
+class DeletePictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+
+    private Context context;
+    private int id;
+    private String path;
+
+    public DeletePictureAsyncTask(Context context,int id, String path){
+        this.context=context;
+        this.id=id;
+        this.path=path;
+    }
+
+    @Override
+    protected Boolean doInBackground(Void... arg0) {
+        // do background processing and return the appropriate result
+        // ...
+
+        ContentResolver cr = context.getContentResolver();
+        Uri toDelete = ContentUris.withAppendedId(PicturesProvider.CONTENT_URI, id);
+        cr.delete(toDelete,null,null);
+        File file = new File(path);
+        file.delete();
+
+
+        return true;
     }
 }

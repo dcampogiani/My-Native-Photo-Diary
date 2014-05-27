@@ -3,11 +3,11 @@
 
     <string name="app_name">My Native Photo Diary</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="action_new_picture">New Picture</string>
-    <string name="hello_places_fragment">Hello places fragment</string>
     <string name="delete_button_text">Delete</string>
     <string name="share_button_text">Share</string>
     <string name="insert_description_dialog_title">Description:</string>
+    <string name="insert_description_dialog_hint">Description</string>
     <string name="send_to">Send to</string>
+    <string name="image_content_description">Image</string>
 </resources>

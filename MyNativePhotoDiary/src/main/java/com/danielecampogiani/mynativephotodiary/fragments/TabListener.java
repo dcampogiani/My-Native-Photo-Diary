@@ -11,9 +11,9 @@ import android.app.FragmentTransaction;
 public class TabListener<T extends Fragment> implements ActionBar.TabListener{
 
     private Fragment fragment;
-    private Activity activity;
-    private Class<T> fragmentClass;
-    private int frameContainer;
+    private final Activity activity;
+    private final Class<T> fragmentClass;
+    private final int frameContainer;
 
     public TabListener(Activity activity, int frameContainer, Class<T> fragmentClass){
         this.activity=activity;

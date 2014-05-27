@@ -14,5 +14,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/userInput" />
+        android:id="@+id/userInput"
+        android:hint="@string/insert_description_dialog_hint"
+        android:inputType="text" />
 </LinearLayout>

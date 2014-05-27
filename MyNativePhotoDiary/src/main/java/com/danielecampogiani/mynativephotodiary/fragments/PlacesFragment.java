@@ -38,7 +38,7 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
 
     private Cursor pictures;
     private GoogleMap map;
-    LocationClient locationClient;
+    private LocationClient locationClient;
 
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
@@ -84,8 +84,7 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = new String[]{PicturesProvider.KEY_ID,PicturesProvider.KEY_LATITUDE,PicturesProvider.KEY_LONGITUDE,PicturesProvider.KEY_URI};
-        CursorLoader loader = new CursorLoader(getActivity(), PicturesProvider.CONTENT_URI,projection,null,null,PicturesProvider.KEY_ID + " DESC");
-        return loader;
+        return new CursorLoader(getActivity(), PicturesProvider.CONTENT_URI,projection,null,null,PicturesProvider.KEY_ID + " DESC");
     }
 
     @Override

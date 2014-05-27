@@ -28,10 +28,7 @@ import java.io.File;
  */
 public class TimelinePicturesAdapter extends CursorAdapter {
 
-    private LayoutInflater myInflater;
-    private static final int ID_TAG = 1;
-    private static final int DESCRIPTION_TAG = 2;
-    private static final int URI_TAG = 3;
+    private final LayoutInflater myInflater;
 
     public TimelinePicturesAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
@@ -121,9 +118,9 @@ public class TimelinePicturesAdapter extends CursorAdapter {
 
 class DeletePictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
-    private Context context;
-    private int id;
-    private String path;
+    private final Context context;
+    private final int id;
+    private final String path;
 
     public DeletePictureAsyncTask(Context context,int id, String path){
         this.context=context;

@@ -55,8 +55,7 @@ public class TimelineFragment extends ListFragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = new String[]{PicturesProvider.KEY_ID,PicturesProvider.KEY_DESCRIPTION,PicturesProvider.KEY_URI};
-        CursorLoader loader = new CursorLoader(getActivity(), PicturesProvider.CONTENT_URI,projection,null,null,PicturesProvider.KEY_ID + " DESC");
-        return loader;
+        return new CursorLoader(getActivity(), PicturesProvider.CONTENT_URI,projection,null,null,PicturesProvider.KEY_ID + " DESC");
     }
 
     @Override

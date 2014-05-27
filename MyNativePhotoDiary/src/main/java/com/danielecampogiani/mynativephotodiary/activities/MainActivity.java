@@ -1,5 +1,6 @@
 package com.danielecampogiani.mynativephotodiary.activities;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.ActionBar.TabListener;
@@ -38,7 +39,7 @@ public class MainActivity extends Activity {
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private Uri currentUri;
 
-    ActionBar actionBar;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +137,7 @@ public class MainActivity extends Activity {
         return Uri.fromFile(mediaFile);
     }
 
+    @SuppressLint("all")
     private void saveNewPicture(){
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -177,7 +179,7 @@ public class MainActivity extends Activity {
 
     }
 
-    class NewPictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+    private class NewPictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
         @Override
         protected Boolean doInBackground(Void... arg0) {
             // do background processing and return the appropriate result
@@ -195,10 +197,10 @@ public class MainActivity extends Activity {
         }
     }
 
-    class SavePictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+    private class SavePictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
-        private Uri uri;
-        private String description;
+        private final Uri uri;
+        private final String description;
 
         public SavePictureAsyncTask(Uri uri, String description){
             this.uri=uri;

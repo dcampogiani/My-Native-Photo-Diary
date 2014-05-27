@@ -109,13 +109,7 @@ public class MainActivity extends Activity {
 
         // display UI progress indicator
         // ...
-        new NewPictureAsyncTask() {
-            protected void onPostExecute(Boolean result) {
-                // dismiss UI progress indicator
-                // process the result
-                // ...
-            }
-        }.execute(); // start the background processing
+        new NewPictureAsyncTask().execute(); // start the background processing
 
     }
 
@@ -153,13 +147,7 @@ public class MainActivity extends Activity {
 
                 // display UI progress indicator
                 // ...
-                new SavePictureAsyncTask(currentUri,input.getText().toString()) {
-                    protected void onPostExecute(Boolean result) {
-                        // dismiss UI progress indicator
-                        // process the result
-                        // ...
-                    }
-                }.execute(); // start the background processing
+                new SavePictureAsyncTask(currentUri,input.getText().toString()).execute(); // start the background processing
 
             }
 

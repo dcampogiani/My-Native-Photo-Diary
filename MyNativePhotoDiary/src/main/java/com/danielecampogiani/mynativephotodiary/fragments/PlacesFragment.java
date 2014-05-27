@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,9 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -104,28 +108,8 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
         map.clear();
         Log.i("PlacesFragment","addMarkers()");
 
-        if (pictures!=null && pictures.moveToFirst()){
+        new AddMarkersAsyncTask().execute(); // start the background processing
 
-
-            do{
-                Double lat = pictures.getDouble(pictures.getColumnIndex(PicturesProvider.KEY_LATITUDE));
-                Double lon = pictures.getDouble(pictures.getColumnIndex(PicturesProvider.KEY_LONGITUDE));
-
-                Bitmap fullImage = BitmapFactory.decodeFile(pictures.getString(pictures.getColumnIndex(PicturesProvider.KEY_URI)));
-                if (fullImage==null)
-                    continue;
-                Bitmap image = Bitmap.createScaledBitmap(fullImage,fullImage.getWidth()/5, fullImage.getHeight()/5,false);
-
-                BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(image);
-                MarkerOptions options = new MarkerOptions().position(new LatLng(lat,lon)).icon(icon);
-                //Log.i("PlacesFragment",pictures.getString(pictures.getColumnIndex(PicturesProvider.KEY_URI)));
-                map.addMarker(options);
-
-            }
-            while (pictures.moveToNext());
-
-
-        }
     }
 
     @Override
@@ -160,5 +144,47 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
         }
     }
 
+    private class AddMarkersAsyncTask extends AsyncTask<Void, Void, List<MarkerOptions>> {
+        @Override
+        protected List<MarkerOptions> doInBackground(Void... arg0) {
+            // do background processing and return the appropriate result
+            // ...
+
+            ArrayList<MarkerOptions> result = new ArrayList<MarkerOptions>();
+
+            if (pictures!=null && pictures.moveToFirst()){
+
+
+                do{
+                    Double lat = pictures.getDouble(pictures.getColumnIndex(PicturesProvider.KEY_LATITUDE));
+                    Double lon = pictures.getDouble(pictures.getColumnIndex(PicturesProvider.KEY_LONGITUDE));
+
+                    Bitmap fullImage = BitmapFactory.decodeFile(pictures.getString(pictures.getColumnIndex(PicturesProvider.KEY_URI)));
+                    if (fullImage==null)
+                        continue;
+                    Bitmap image = Bitmap.createScaledBitmap(fullImage,fullImage.getWidth()/5, fullImage.getHeight()/5,false);
+
+                    BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(image);
+                    MarkerOptions options = new MarkerOptions().position(new LatLng(lat,lon)).icon(icon);
+                    //Log.i("PlacesFragment",pictures.getString(pictures.getColumnIndex(PicturesProvider.KEY_URI)));
+                    //map.addMarker(options);
+                    result.add(options);
+
+                }
+                while (pictures.moveToNext());
+
+
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(List<MarkerOptions> result) {
+            for (MarkerOptions current : result)
+                map.addMarker(current);
+        }
+
+    }
 
 }

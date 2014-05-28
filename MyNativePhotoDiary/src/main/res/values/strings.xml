@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">My Native Photo Diary</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_new_picture">New Picture</string>
     <string name="delete_button_text">Delete</string>
     <string name="share_button_text">Share</string>

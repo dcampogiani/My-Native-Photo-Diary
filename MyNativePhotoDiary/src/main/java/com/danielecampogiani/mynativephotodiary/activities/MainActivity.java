@@ -16,7 +16,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -83,7 +82,6 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_new_picture) {
-            Log.i("MainActivity","new picture selected");
             takeNewPicture();
             return true;
         }
@@ -107,20 +105,16 @@ public class MainActivity extends Activity {
 
     private void takeNewPicture(){
 
-        // display UI progress indicator
-        // ...
-        new NewPictureAsyncTask().execute(); // start the background processing
+        new NewPictureAsyncTask().execute();
 
     }
 
     private Uri getOutputMediaFile(){
 
-        //File mediaStorageDir = getFilesDir();
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyNativePhotoDiary"  );
 
         if (!mediaStorageDir.exists()){
             if (!mediaStorageDir.mkdirs()){
-                Log.d("MainActivity","failed to create directory");
                 return null;
             }
         }
@@ -145,9 +139,8 @@ public class MainActivity extends Activity {
 
             public void onClick(DialogInterface dialog, int id) {
 
-                // display UI progress indicator
-                // ...
-                new SavePictureAsyncTask(currentUri,input.getText().toString()).execute(); // start the background processing
+
+                new SavePictureAsyncTask(currentUri,input.getText().toString()).execute();
 
             }
 
@@ -170,14 +163,10 @@ public class MainActivity extends Activity {
     private class NewPictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
         @Override
         protected Boolean doInBackground(Void... arg0) {
-            // do background processing and return the appropriate result
-            // ...
 
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             currentUri = getOutputMediaFile();
             intent.putExtra(MediaStore.EXTRA_OUTPUT,currentUri);
-
-            Log.d("MainActivity","provo a salvare immagine in "+currentUri);
 
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
@@ -197,22 +186,13 @@ public class MainActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(Void... arg0) {
-            // do background processing and return the appropriate result
-            // ...
 
             try {
 
                 ExifInterface exif = new ExifInterface(uri.getPath());
                 float[] latLong = new float[2];
 
-                if (exif.getLatLong(latLong)){
-                    Log.i("MainActivity","immagine ha coordinate: "+ latLong[0] + " , "+ latLong[1]);
-                }
-
-                Log.i("MainActivity","la descrizione è "+ description);
-
-                Log.i("MainActivity", "salvata nuova immagine in "+uri.getPath());
-
+                exif.getLatLong(latLong);
 
                 ContentResolver cr = getContentResolver();
                 ContentValues newValues = new ContentValues();

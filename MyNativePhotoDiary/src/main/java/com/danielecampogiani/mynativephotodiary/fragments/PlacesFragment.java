@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,9 +105,8 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
     private void addMarkers(){
 
         map.clear();
-        Log.i("PlacesFragment","addMarkers()");
 
-        new AddMarkersAsyncTask().execute(); // start the background processing
+        new AddMarkersAsyncTask().execute();
 
     }
 
@@ -147,8 +145,6 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
     private class AddMarkersAsyncTask extends AsyncTask<Void, Void, List<MarkerOptions>> {
         @Override
         protected List<MarkerOptions> doInBackground(Void... arg0) {
-            // do background processing and return the appropriate result
-            // ...
 
             ArrayList<MarkerOptions> result = new ArrayList<MarkerOptions>();
 
@@ -163,11 +159,8 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
                     if (fullImage==null)
                         continue;
                     Bitmap image = Bitmap.createScaledBitmap(fullImage,fullImage.getWidth()/5, fullImage.getHeight()/5,false);
-
                     BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(image);
                     MarkerOptions options = new MarkerOptions().position(new LatLng(lat,lon)).icon(icon);
-                    //Log.i("PlacesFragment",pictures.getString(pictures.getColumnIndex(PicturesProvider.KEY_URI)));
-                    //map.addMarker(options);
                     result.add(options);
 
                 }

@@ -94,30 +94,31 @@ public class TimelinePicturesAdapter extends CursorAdapter {
         descriptionView.setText(cursor.getString(cursor.getColumnIndex(PicturesProvider.KEY_DESCRIPTION)));
         imageView.setImageURI(Uri.parse(cursor.getString(cursor.getColumnIndex(PicturesProvider.KEY_URI))));
     }
+
+    private class DeletePictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
+
+        private final Context context;
+        private final int id;
+        private final String path;
+
+        public DeletePictureAsyncTask(Context context,int id, String path){
+            this.context=context;
+            this.id=id;
+            this.path=path;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... arg0) {
+
+            ContentResolver cr = context.getContentResolver();
+            Uri toDelete = ContentUris.withAppendedId(PicturesProvider.CONTENT_URI, id);
+            cr.delete(toDelete,null,null);
+            File file = new File(path);
+            file.delete();
+
+
+            return true;
+        }
+    }
 }
 
-class DeletePictureAsyncTask extends AsyncTask<Void, Integer, Boolean> {
-
-    private final Context context;
-    private final int id;
-    private final String path;
-
-    public DeletePictureAsyncTask(Context context,int id, String path){
-        this.context=context;
-        this.id=id;
-        this.path=path;
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... arg0) {
-
-        ContentResolver cr = context.getContentResolver();
-        Uri toDelete = ContentUris.withAppendedId(PicturesProvider.CONTENT_URI, id);
-        cr.delete(toDelete,null,null);
-        File file = new File(path);
-        file.delete();
-
-
-        return true;
-    }
-}

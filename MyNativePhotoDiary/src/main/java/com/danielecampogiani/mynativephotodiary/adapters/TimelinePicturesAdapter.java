@@ -74,13 +74,7 @@ public class TimelinePicturesAdapter extends CursorAdapter {
                             public void onClick(DialogInterface dialog,int id) {
                                 // if this button is clicked, close
                                 // current activity
-                                new DeletePictureAsyncTask(context,pictureId,uri) {
-                                    protected void onPostExecute(Boolean result) {
-                                        // dismiss UI progress indicator
-                                        // process the result
-                                        // ...
-                                    }
-                                }.execute(); // start the background processing
+                                new DeletePictureAsyncTask(context,pictureId,uri).execute(); // start the background processing
 
 
                             }

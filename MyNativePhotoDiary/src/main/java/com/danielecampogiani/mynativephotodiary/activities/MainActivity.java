@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +38,10 @@ public class MainActivity extends Activity {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private Uri currentUri;
+    private long beforeCamera;
+    private long afterCamera;
+    private long beforeSaving;
+    private long afterSaving;
 
     private ActionBar actionBar;
 
@@ -82,6 +87,7 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_new_picture) {
+            beforeCamera = System.currentTimeMillis();
             takeNewPicture();
             return true;
         }
@@ -94,6 +100,8 @@ public class MainActivity extends Activity {
         if (requestCode==CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
 
             if (resultCode==RESULT_OK){
+
+                afterCamera = System.currentTimeMillis();
 
                 saveNewPicture();
 
@@ -189,6 +197,7 @@ public class MainActivity extends Activity {
 
             try {
 
+                beforeSaving = System.currentTimeMillis();
                 ExifInterface exif = new ExifInterface(uri.getPath());
                 float[] latLong = new float[2];
 
@@ -210,6 +219,13 @@ public class MainActivity extends Activity {
 
             return true;
         }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            afterSaving = System.currentTimeMillis();
+            Log.i("MyNativePhotoDiary"," Before Camera: "+beforeCamera + " After Camera "+ afterCamera + " Before Saving: "+beforeSaving + " After Saving: "+ afterSaving);
+        }
+
     }
 
 }

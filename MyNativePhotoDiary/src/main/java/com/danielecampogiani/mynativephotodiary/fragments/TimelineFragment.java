@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.danielecampogiani.mynativephotodiary.R;
 import com.danielecampogiani.mynativephotodiary.adapters.TimelinePicturesAdapter;
 import com.danielecampogiani.mynativephotodiary.persistence.PicturesProvider;
+import com.nhaarman.listviewanimations.swinginadapters.prepared.AlphaInAnimationAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +24,7 @@ import com.danielecampogiani.mynativephotodiary.persistence.PicturesProvider;
 public class TimelineFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private TimelinePicturesAdapter adapter;
+    private AlphaInAnimationAdapter animatedAdapter;
 
     public TimelineFragment() {
         // Required empty public constructor
@@ -46,7 +48,9 @@ public class TimelineFragment extends ListFragment implements LoaderManager.Load
         super.onActivityCreated(savedInstanceState);
 
         adapter = new TimelinePicturesAdapter(getActivity(),null,0);
-        setListAdapter(adapter);
+        animatedAdapter = new AlphaInAnimationAdapter(adapter);
+        animatedAdapter.setAbsListView(getListView());
+        setListAdapter(animatedAdapter);
         getLoaderManager().initLoader(0,null,this);
     }
 

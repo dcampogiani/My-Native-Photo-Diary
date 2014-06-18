@@ -39,11 +39,10 @@ import java.util.List;
 public class PlacesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,  GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
 
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private Cursor pictures;
     private GoogleMap map;
     private LocationClient locationClient;
-
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     public PlacesFragment() {
         // Required empty public constructor
@@ -70,11 +69,18 @@ public class PlacesFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+
         MapFragment f = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        if (f != null)
-            getFragmentManager().beginTransaction().remove(f).commit();
+        if (f != null) {
+            try {
+                getFragmentManager().beginTransaction().remove(f).commit();
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+
+        }
         locationClient.disconnect();
+        super.onDestroyView();
     }
 
     @Override

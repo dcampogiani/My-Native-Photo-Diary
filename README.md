@@ -8,4 +8,4 @@ You can also send your best photos to your friends.
 
 ##Some Info
 
-You can find on my [blog](http://www.danielecampogiani.com/category/programmazione/applicazioni-ibride-e-native/) (just italian sorry) some info about the code.
+You can find on my [blog](https://github.com/dcampogiani/My-Native-Photo-Diary/raw/master/Applicazioni%20Ibride%20e%20Native.pdf) (just italian sorry) some info about the code.
